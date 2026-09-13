@@ -1,0 +1,62 @@
+[
+  {
+    "name": "AI Agent实习生",
+    "salary": 180,
+    "city": "福州"
+  },
+  {
+    "name": "Python后端实习生",
+    "salary": 160,
+    "city": "厦门"
+  },
+  {
+    "name": "前端开发实习生",
+    "salary": 150,
+    "city": "泉州"
+  },
+  {
+    "name": "Java开发实习生",
+    "salary": 170,
+    "city": "福州"
+  },
+  {
+    "name": "大模型应用开发实习生",
+    "salary": 200,
+    "city": "厦门"
+  },
+  {
+    "name": "数据分析实习生",
+    "salary": 140,
+    "city": "莆田"
+  },
+  {
+    "name": "机器学习实习生",
+    "salary": 190,
+    "city": "福州"
+  },
+  {
+    "name": "测试开发实习生",
+    "salary": 150,
+    "city": "厦门"
+  },
+  {
+    "name": "爬虫开发实习生",
+    "salary": 175,
+    "city": "泉州"
+  },
+  {
+    "name": "全栈开发实习生",
+    "salary": 185,
+    "city": "福州"
+  },
+  {
+    "name": "算法实习生",
+    "salary": 220,
+    "city": "厦门"
+  },
+  {
+    "name": "后端开发实习生",
+    "salary": 165,
+    "city": "莆田"
+  }
+]

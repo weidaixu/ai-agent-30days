@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 import json
-from agent_v1 import search_job_tool
+from day03.agent_v1 import search_job_tool
 
 
 load_dotenv()
@@ -44,7 +44,7 @@ def run_agent(user_text):
     messages = [
         {
             "role":"system",#system：给模型规定任务和规则
-            "content":"从用户需求中提取岗位查询参数，只返回json。字段必须包含city、min_salart、keyword"
+            "content":"从用户需求中提取岗位查询参数，让模型根据用户需求选择工具并提取参数，工具执行完成后根据工具结果给用户自然语言回答。字段必须包含city、min_salart、keyword"
         },
         {
             "role":"user",
@@ -105,11 +105,12 @@ def run_agent(user_text):
         tools=tools
     )
     final_text = final_response.choices[0].message.content
-    print(final_text)
+    return final_text
 
 if __name__ == "__main__":
     user_text = input("请输入你的需求：")
-    run_agent(user_text)
+    final_output = run_agent(user_text)
+    print(final_output)
 
 
 

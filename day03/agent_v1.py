@@ -30,9 +30,6 @@ def search_job_tool(city,min_salary,keyword):
 
     result = filter_job(jobs,city,min_salary,keyword)
 
-    for job in result:
-        print(job["name"],job["city"],job["salary"])
-
     return result
 
 
@@ -115,7 +112,7 @@ def agent(user_text):
 
 
 #用户输入
-if __name__ == "_main_":
+if __name__ == "__main__":
     user_text = input("请输入你的需求：")
     agent(user_text)
 
