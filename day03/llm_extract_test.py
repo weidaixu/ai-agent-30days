@@ -68,7 +68,11 @@ def run_agent(user_text):
 
     #第一次LLM返回的结果
     message = response.choices[0].message
-    tool_call = message.tool_calls[0]
+    tool_calls = message.tool_calls
+    if not tool_calls:
+        return message.content
+   
+    tool_call = tool_calls[0]
 
     #Tool 参数解析
     try:
