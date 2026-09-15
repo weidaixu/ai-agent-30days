@@ -1,36 +1,5 @@
-import json
-
-
-#调用json
-def load_jobs():
-    with open("jobs.json","r",encoding = "utf-8") as file:
-        jobs = json.load(file)
-
-    return jobs
-
-#岗位筛选
-def filter_job(jobs,city,min_salary,keyword):
-    result = []
-
-    for job in jobs:
-        if(
-            (city == "" or city == job["city"])
-            and job["salary"] >= min_salary
-            and (keyword == "" or keyword in job["name"])
-        ):
-            result.append(job)
-
-    return result
-
-
-
-#岗位查询
-def search_job_tool(city,min_salary,keyword):
-    jobs = load_jobs()
-
-    result = filter_job(jobs,city,min_salary,keyword)
-
-    return result
+from day03.data import load_jobs
+from day03.tools import search_job_tool
 
 
 
@@ -109,6 +78,8 @@ def agent(user_text):
 
     else:
         print("我暂时不知道该调用什么工具")
+
+
 
 
 #用户输入

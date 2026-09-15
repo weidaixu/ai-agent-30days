@@ -1,5 +1,5 @@
 from fastapi import FastAPI,HTTPException
-from pydantic import BaseModel
+from day04.schemas import ChatRequest,ChatResponse
 from day03.llm_extract_test import run_agent
 import logging
 logger = logging.getLogger("uvicoen.error")
@@ -13,13 +13,6 @@ def health():
     return result
 
 
-
-
-class ChatRequest(BaseModel):
-    message : str
-
-class ChatResponse(BaseModel):
-    answer : str
 
 @app.post("/test")
 def test(request:ChatRequest):
