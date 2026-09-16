@@ -44,10 +44,7 @@ def search_job_tool(city,min_salary,keyword):
 
     return result
 
-tool_map = {
-    "search_job_tool":search_job_tool,
-    "city_average_salary_tool":city_average_salary_tool
-}
+
 
 
 

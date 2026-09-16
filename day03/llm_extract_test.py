@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 import json
-from day03.tools import search_job_tool,tool_map
+from day03.tool_registry import tool_definitions,tool_map
 
 
 load_dotenv()
@@ -16,56 +16,7 @@ client = OpenAI(
     base_url = base_url
 )
 
-search_job_schema = {
-    "type":"object",
-    "properties":{
-        "city":{"type":"string"},
-        "min_salary":{
-            "type":"integer",
-            "description":"最低薪资，必须直接使用用户输入的整数，不进行单位换算。"
-            "例如用户输入160，则返回160。"
-            },
-        "keyword":{"type":"string"}
-    },
-       "required":[
-        "city",
-        "min_salary",
-        "keyword"
-    ]
-}
 
-
-city_average_salary_schema = {
-    "type":"object",
-    "properties":{
-        "city":{
-            "type":"string",
-            "description":"要查询平均薪资的城市名字"
-        },
-    },
-        "required":[
-            "city"
-        ]
-}
-
-tools = [
-    {
-        "type":"function",
-        "function":{
-            "name":"search_job_tool",
-            "description":"根据城市、最低薪资和岗位关键词查询符合条件的岗位",
-            "parameters":search_job_schema
-        }
-    },
-        {
-            "type":"function",
-            "function":{
-                "name":"city_average_salary_tool",
-                "description":"查询指定城市岗位的平均薪资",
-                "parameters":city_average_salary_schema
-            }
-        }
-]
 def run_agent(user_text):
     messages = [
         {
@@ -86,7 +37,7 @@ def run_agent(user_text):
     response = client.chat.completions.create(
         model = model,
         messages = messages,
-        tools = tools,
+        tools = tool_definitions,
     )
 
     #第一次LLM返回的结果
@@ -96,27 +47,13 @@ def run_agent(user_text):
         return message.content
    
     tool_call = tool_calls[0]
-    tool_name = tool_call.function.name
-    tool_function = tool_map.get(tool_name)
-
-    if not tool_function:
-        print("未找到工具")
-        return
-
-    #Tool 参数解析
-    try:
-        arguments = json.loads(tool_call.function.arguments)
-
-    except json.JSONDecodeError:
-        print("Tool参数解析失败")
-        return 
-
-    except KeyError:
-        print("Tool 参数确实必要的字段")
-        return
-    #执行Tool+把结果转成文本
-    tool_result = tool_function(**arguments)
-    tool_result_text = json.dumps(tool_result,ensure_ascii=False)    
+    tool_execution = execute_tool(tool_call)
+    tool_ok = tool_execution["ok"]
+    if tool_ok:
+        tool_result_text = json.dumps(tool_execution["data"],ensure_ascii=False)
+    else:
+        return tool_execution["error"]
+       
 
     messages.append(message)  
     messages.append(
@@ -130,18 +67,46 @@ def run_agent(user_text):
     final_response = client.chat.completions.create(
         model = model,
         messages=messages,
-        tools=tools
+        tools=tool_definitions
     )
     final_text = final_response.choices[0].message.content
 
 
-
-    print(tool_name)
-    print(tool_function)
-
     return final_text
 
+def execute_tool(tool_call):
+    tool_name = tool_call.function.name
+    tool_function = tool_map.get(tool_name)
 
+    if not tool_function:
+        return {
+            "ok": False,
+            "error": "未找到对应的工具"
+        }
+
+    #Tool 参数解析
+    try:
+        arguments = json.loads(tool_call.function.arguments)        
+        tool_result = tool_function(**arguments)
+
+
+    except json.JSONDecodeError:
+        return {
+            "ok":False,
+            "error":"Tool 参数JSON解析失败"
+        }
+
+    except TypeError:
+        return{
+            "ok":False,
+            "error":"Tool 参数和函数定义不匹配"
+        }
+
+    return {
+        "ok":True,
+        "data":tool_result
+    }
+        
 
 
 
