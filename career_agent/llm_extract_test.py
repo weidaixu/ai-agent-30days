@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 import json
-from day03.tool_registry import tool_definitions,tool_map
+from career_agent.tool_registry import tool_definitions,tool_map
 
 
 load_dotenv()
@@ -26,7 +26,7 @@ def run_agent(user_text):
             "min_salary必须保留用户输入的数字，不得自动乘100、1000或进行薪资单位换算。"
             "让模型根据用户需求选择工具并提取参数,"
             "工具执行完成后根据工具结果给用户自然语言回答。"
-            "字段必须包含city、min_salart、keyword"
+            "字段必须包含city、min_salary、keyword"
         },
         {
             "role":"user",

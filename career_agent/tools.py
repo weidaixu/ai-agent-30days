@@ -1,4 +1,4 @@
-from day03.data import load_jobs
+from data.data import load_jobs
 
 
 #岗位筛选

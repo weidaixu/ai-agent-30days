@@ -1,8 +1,8 @@
 from fastapi import FastAPI,HTTPException
-from day04.schemas import ChatRequest,ChatResponse
-from day03.llm_extract_test import run_agent
+from api.schemas import ChatRequest,ChatResponse
+from career_agent.llm_extract_test import run_agent
 import logging
-logger = logging.getLogger("uvicoen.error")
+logger = logging.getLogger("uvicorn.error")
 app = FastAPI()
 
 @app.get("/health")

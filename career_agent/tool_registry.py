@@ -1,4 +1,4 @@
-from day03.tools import search_job_tool,city_average_salary_tool
+from career_agent.tools import search_job_tool,city_average_salary_tool
 
 search_job_schema = {
     "type":"object",
