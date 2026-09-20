@@ -2,7 +2,9 @@ from pydantic import BaseModel,Field
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-import json
+
+from career_agent.llm_out_parser import parse_llm_json
+
 
 load_dotenv()
 
@@ -44,7 +46,8 @@ class JDAnalysis(BaseModel):
     salary_range:str
     responsibilities:list[str]
     requirements:list[str]
-    bonus_skills:list[str] = Field(default=list)
+    required_skills:list[str]
+    bonus_skills:list[str] = Field(defaul_factory=list)
     work_hours:str
     internship_requirement:str
 
@@ -65,14 +68,61 @@ def analyze_jd(jd_text):
             responsibilities
             requirements
             work_hours
+            required_skills
             internship_requirement
             不要输出 JSON 之外的解释文字
             只输出合法JSON
+            如果 JD 中没有对应信息：
+
+            responsibilities 不存在时返回 []
+            requirements 不存在时返回 []
+            required_skills 不存在时返回 []
+            bonus_skills 不存在时返回 []
+
+            company_name 不存在时返回 ""
+            job_title 不存在时返回 ""
+            city 不存在时返回 ""
+            salary_range 不存在时返回 ""
+            work_hours 不存在时返回 ""
+            internship_requirement 不存在时返回 ""
+
+            禁止使用 "未提供"、"未知"、"无" 等字符串代替 list 类型字段。
+
+            internship_requirement 必须返回字符串 str。
+
+            如果有多个实习时间要求，请合并成一个完整字符串。
+
+            例如：
+            “每周至少实习4天”
+            “连续实习3个月以上”
+
+            应该返回：
+
+            required_skills 必须始终返回，禁止省略。
+
+            如果岗位要求中存在技术技能，
+            返回标准化后的技术名称列表。
+
+            例如：
+            “熟悉 Python” → ["Python"]
+            “了解 Docker” → ["Docker"]
+            “有 RAG 项目经验” → ["RAG"]
+
+            如果确实没有任何技术技能，
+            必须返回：
+
+            "required_skills": []
+
+            不能省略 required_skills 字段。
+            required_skills 中每个元素都应该是适合直接做技能集合比较的技术名称。
+
+            如果 JD 中没有实习要求，返回空字符串 ""。
             bonus_skills 专门提取“优先、加分、熟悉更佳”等内容，不要混入 requirements
             bonus_skills 必须始终返回。如果 JD 中没有加分项，返回空列表 []，不要省略字段。
             不要使用Markdown代码块，不要输出```json和```或其他额外文字
             internship_requirement 要保留原始具体要求，不要只输出“是/否”
             requirements 只提取学历、技能、经验等岗位要求，不要包含实习天数、实习月份等时间要求。
+            required_skills 必须返回,只提取技术技能名称,不要放学历、实习时间、工作职责
             internship_requirement 专门提取每周到岗天数、连续实习时长、到岗时间等实习要求。"""
                     
         },
@@ -89,9 +139,7 @@ def analyze_jd(jd_text):
     )
 
     result_text = response.choices[0].message.content
-    cleaned_text = result_text.replace("```json","").replace("```","").strip()
-    
-    jd_dict = json.loads(cleaned_text)
+    jd_dict = parse_llm_json(result_text)
     jd_result = JDAnalysis(**jd_dict)
     return jd_result
 
@@ -127,3 +175,4 @@ if __name__ == "__main__":
     result = analyze_jd(test_jd)
     formatted_result = format_jd_analysis(result)
     print(formatted_result)
+    print(result.required_skills)
