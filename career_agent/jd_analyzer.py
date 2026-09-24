@@ -47,7 +47,7 @@ class JDAnalysis(BaseModel):
     responsibilities:list[str]
     requirements:list[str]
     required_skills:list[str]
-    bonus_skills:list[str] = Field(defaul_factory=list)
+    bonus_skills:list[str] = Field(default_factory=list)
     work_hours:str
     internship_requirement:str
 

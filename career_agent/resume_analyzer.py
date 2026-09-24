@@ -25,7 +25,7 @@ def analyze_resume(resume_text):
             "content":
             """
             你是一名资深的简历分析专家，你负责提取简历中存在的信息，不允许推测，
-            必须输出："skills"、"project"、"education"、"major"、available_duration"这五个字段。
+            必须输出："skills"、"projects"、"education"、"major"、available_duration"这五个字段。
             类型必须满足：skills → list[str]、projects → list[str]、education → str、major → str、available_duration → str
             skills 只提取明确出现或明确体现的技术能力，不要强行加入学习能力强、认真负责等主观内容
             project保存项目名称+简短真实技术描述，但不能添加简历里没有的技术,不要因为项目类型、岗位名称或常识推断简历未明确体现的技能。

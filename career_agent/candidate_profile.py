@@ -27,11 +27,19 @@ candidate = CandidateProfile(
 
 
 
+
 job_skills = ["Python","RAG","FastAPI","JSON","react"]
 job_skills_set = set(job_skills)
 candidateProfile_skill_set = set(candidate.skills)
 missing_skills = job_skills_set - candidateProfile_skill_set
 matched_skills = job_skills_set & candidateProfile_skill_set
+
+
+
+
+
 if __name__=="__main__":
+
+
     print(missing_skills)
     print(matched_skills)
